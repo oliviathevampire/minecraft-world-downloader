@@ -84,10 +84,13 @@ public class EntityRegistry {
 
     public void updatePlayerAction(DataTypeProvider provider) {
         executor.execute(() -> attempt(() -> {
-            byte actions = provider.readNext();
+            int actions = provider.readVarInt();
             int playerCnt = provider.readVarInt();
 
             for (int i = 0; i < playerCnt; i++) {
+                if (!provider.hasRemaining(16)) {
+                    return;
+                }
                 UUID uuid = provider.readUUID();
 
                 if ((actions & 0x01) > 0) {
