@@ -88,6 +88,9 @@ public class EntityRegistry {
             int playerCnt = provider.readVarInt();
 
             for (int i = 0; i < playerCnt; i++) {
+                if (!provider.hasRemaining(16)) {
+                    return;
+                }
                 UUID uuid = provider.readUUID();
 
                 if ((actions & 0x01) > 0) {

@@ -94,6 +94,14 @@ public class DataTypeProvider {
         return pos < finalFullPacket.length;
     }
 
+    public boolean hasRemaining(int length) {
+        return pos + length <= finalFullPacket.length;
+    }
+
+    public int remaining() {
+        return finalFullPacket.length - pos;
+    }
+
     public byte readNext() {
         return finalFullPacket[pos++];
     }
@@ -108,6 +116,13 @@ public class DataTypeProvider {
 
     public byte[] readByteArray(int size) {
         byte[] res = new byte[size];
+
+        if (!hasRemaining(size)) {
+            throw new IllegalStateException(
+                "Not enough bytes remaining in packet. Requested " + size +
+                ", remaining " + remaining() + "."
+            );
+        }
 
         System.arraycopy(finalFullPacket, pos, res, 0, size);
         pos += size;
